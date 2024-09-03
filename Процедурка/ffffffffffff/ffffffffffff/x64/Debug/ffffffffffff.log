@@ -1,0 +1,13 @@
+﻿  ffffffffffff.cpp
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(13,15): warning C4101: R: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(14,22): warning C4101: V: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(13,21): warning C4101: b: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(14,31): warning C4101: y: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(14,19): warning C4101: l: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(13,18): warning C4101: A: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(13,12): warning C4101: h: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(15,10): warning C4101: str: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(119,21): warning C4101: letter: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(120,21): warning C4101: minka: неиспользованная локальная переменная
+C:\Users\borga\source\repos\ffffffffffff\ffffffffffff\ffffffffffff.cpp(120,28): warning C4101: minind: неиспользованная локальная переменная
+  ffffffffffff.vcxproj -> C:\Users\borga\source\repos\ffffffffffff\x64\Debug\ffffffffffff.exe

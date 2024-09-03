@@ -1,0 +1,25 @@
+﻿  4a.cpp
+C:\Users\borga\source\repos\4a\4a\4a.cpp(145,10): warning C4305: return: усечение из "__int64" в "int"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(145,10): warning C4309: return: усечение константного значения
+C:\Users\borga\source\repos\4a\4a\4a.cpp(149,25): warning C4101: next2: неиспользованная локальная переменная
+C:\Users\borga\source\repos\4a\4a\4a.cpp(433,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(434,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(435,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(436,81): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(440,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(441,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(442,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(443,107): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "max"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(444,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "min"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(445,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "min"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(446,13): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "min"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(447,107): warning C4002: слишком много аргументов для вызова макроса, подобного функции, "min"
+C:\Users\borga\source\repos\4a\4a\4a.cpp(472,16): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\borga\source\repos\4a\4a\4a.cpp(474,13): warning C4244: =: преобразование "double" в "__int64", возможна потеря данных
+C:\Users\borga\source\repos\4a\4a\4a.cpp(483,25): warning C4244: аргумент: преобразование "__int64" в "int", возможна потеря данных
+C:\Users\borga\source\repos\4a\4a\4a.cpp(483,14): warning C4244: аргумент: преобразование "__int64" в "int", возможна потеря данных
+C:\Users\borga\source\repos\4a\4a\4a.cpp(252,25): warning C4101: z: неиспользованная локальная переменная
+C:\Users\borga\source\repos\4a\4a\4a.cpp(252,28): warning C4101: p: неиспользованная локальная переменная
+C:\Users\borga\source\repos\4a\4a\4a.cpp(252,22): warning C4101: y: неиспользованная локальная переменная
+C:\Users\borga\source\repos\4a\4a\4a.cpp(252,19): warning C4101: x: неиспользованная локальная переменная
+  4a.vcxproj -> C:\Users\borga\source\repos\4a\x64\Debug\4a.exe

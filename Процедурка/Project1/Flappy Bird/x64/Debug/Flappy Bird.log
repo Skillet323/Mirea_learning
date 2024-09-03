@@ -1,0 +1,2 @@
+﻿  Main.cpp
+C:\Users\borga\source\repos\Project1\Flappy Bird\GameController.h(9,10): fatal  error C1083: Не удается открыть файл включение: SFML/Graphics.hpp: No such file or directory,

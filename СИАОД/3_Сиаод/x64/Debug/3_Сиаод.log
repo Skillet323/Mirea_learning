@@ -1,0 +1,11 @@
+﻿  3_Сиаод.cpp
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(31,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(39,11): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(56,11): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(221,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(234,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(249,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(262,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(275,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\3_Сиаод\3_Сиаод.cpp(288,24): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+  3_Сиаод.vcxproj -> C:\Users\borga\source\repos\3_Сиаод\x64\Debug\3_Сиаод.exe

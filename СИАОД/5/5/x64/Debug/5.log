@@ -1,0 +1,7 @@
+﻿  5.cpp
+C:\Users\borga\source\repos\5\5\5.cpp(25,9): warning C4244: return: преобразование "__int64" в "int", возможна потеря данных
+C:\Users\borga\source\repos\5\5\5.cpp(114,17): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\borga\source\repos\5\5\5.cpp(141,16): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\borga\source\repos\5\5\5.cpp(146,16): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\borga\source\repos\5\5\5.cpp(238,16): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  5.vcxproj -> C:\Users\borga\source\repos\5\x64\Debug\5.exe

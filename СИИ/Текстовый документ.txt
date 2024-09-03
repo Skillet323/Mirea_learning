@@ -1,0 +1,12 @@
+import numpy as np
+def Euclid(m,n): 
+    return sum((x-y)**2 for x, y in zip(m,n))**0.5
+def EuclidKvadro(m,n):
+    return sum((x-y)**2 for x, y in zip(m,n))
+def W_Euclid(m,n,w):
+    return sum((x-y)**2 * s for x, y, s in zip(m,n,w))**0.5
+def Manhattan(m,n):
+    return sum(abs(x-y) for x, y in zip(m,n))
+def Chebyshev(m,n):
+    return max(abs(x-y) for x, y in zip(m,n))
+

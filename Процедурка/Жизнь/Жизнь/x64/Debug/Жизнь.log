@@ -1,0 +1,3 @@
+﻿  Жизнь.cpp
+C:\Users\borga\source\repos\Жизнь\Жизнь\Жизнь.cpp(41,19): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Жизнь.vcxproj -> C:\Users\borga\source\repos\Жизнь\x64\Debug\Жизнь.exe

@@ -1,0 +1,158 @@
+#ifndef __CL1__H
+#define __CL1__H
+#include <iostream>
+using namespace std;
+class cl1{
+	private:
+	string name;
+	public:
+	cl1(string name1);
+	string Out();
+	~cl1();
+};
+#endif
+class cl2:public cl1{
+	private:
+	string name;
+	public:
+	cl2(string name1);
+	string Out();
+};
+class cl3:public cl1{
+	private:
+	string name;
+	public:
+	cl3(string name1);
+	string Out();
+};
+class cl4:public cl1{
+	private:
+	string name;
+	public:
+	cl4(string name1);
+	string Out();
+};
+
+class cl5:public cl1{
+	private:
+	string name;
+	public:
+	cl5(string name1);
+	string Out();
+};
+class cl6:public cl2, public cl3{
+	private:
+	string name;
+	public:
+	cl6(string name1);
+	string Out();
+};
+
+class cl7:public cl4, public cl5{
+	private:
+	string name;
+	public:
+	cl7(string name1);
+	string Out();
+};
+
+class cl8:public cl6, public cl7{
+	private:
+	string name;
+	public:
+	cl8(string name1);
+	string Out();
+};
+#include "cl1.h"
+cl1::cl1(string name1){
+	name=name1+"_1";
+}
+string cl1::Out(){
+	return name;
+}
+cl1::~cl1(){}
+#include "cl2.h"
+cl2::cl2(string name1):cl1(name1+"_2"){
+	name=name1+"_2";
+}
+string cl2::Out(){
+	return name;
+}
+#include "cl3.h"
+cl3::cl3(string name1):cl1(name1+"_3"){
+	name=name1+"_3";
+}
+string cl3::Out(){
+	return name;
+}
+
+#include "cl4.h"
+cl4::cl4(string name1):cl1(name1+"_4"){
+	name=name1+"_4";
+}
+string cl4::Out(){
+	return name;
+}
+
+#include "cl5.h"
+cl5::cl5(string name1):cl1(name1+"_5"){
+	name=name1+"_5";
+}
+string cl5::Out(){
+	return name;
+}
+
+#include "cl6.h"
+cl6::cl6(string name1):cl2(name1+"_6"),cl3(name1+"_6"){
+	name=name1+"_6";
+}
+string cl6::Out(){
+	return name;
+}
+
+#include "cl7.h"
+cl7::cl7(string name1):cl4(name1+"_7"),cl5(name1+"_7"){
+	name=name1+"_7";
+}
+string cl7::Out(){
+	return name;
+}
+
+#include "cl8.h"
+cl8::cl8(string name1):cl6(name1+"_8"),cl7(name1+"_8"){
+	name=name1+"_8";
+}
+string cl8::Out(){
+	return name;
+}
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include "cl1.h"
+#include "cl2.h"
+#include "cl3.h"
+#include "cl4.h"
+#include "cl5.h"
+#include "cl6.h"
+#include "cl7.h"
+#include "cl8.h"
+#include <iostream>
+using namespace std;
+int main()
+{
+	cl1* a;
+	string name1;
+	cin>>name1;
+	a = (cl1*) (cl2*) new cl8(name1);
+	cout<<a->Out()<<endl;
+	cout<<((cl3*)a)->Out()<<endl;
+	cout<<((cl4*)a)->Out()<<endl;
+	cout<<((cl5*)a)->Out()<<endl;
+	//cout<<((cl6*)a)->Out()<<endl;
+	//cout<<((cl7*)a)->Out()<<endl;
+	//cout<<((cl8*)a)->Out()<<endl;
+	cout<<((cl2*)a)->Out()<<endl;
+	delete a;
+	return(0);
+}

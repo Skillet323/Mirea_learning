@@ -1,0 +1,3 @@
+﻿  4_Сиаод.cpp
+C:\Users\borga\source\repos\4_Сиаод\4_Сиаод.cpp(392,31): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  4_Сиаод.vcxproj -> C:\Users\borga\source\repos\4_Сиаод\x64\Debug\4_Сиаод.exe

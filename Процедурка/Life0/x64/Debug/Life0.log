@@ -1,0 +1,3 @@
+﻿  Life0.cpp
+C:\Users\borga\source\repos\Life0\Life0.cpp(119,9): warning C4101: a: неиспользованная локальная переменная
+  Life0.vcxproj -> C:\Users\borga\source\repos\Life0\x64\Debug\Life0.exe

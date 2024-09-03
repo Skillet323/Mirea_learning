@@ -1,0 +1,5 @@
+﻿  Шарики.cpp
+C:\Users\borga\source\repos\Шарики\Шарики\Шарики.cpp(23,11): warning C4101: k: неиспользованная локальная переменная
+C:\Users\borga\source\repos\Шарики\Шарики\Шарики.cpp(23,9): warning C4101: t: неиспользованная локальная переменная
+C:\Users\borga\source\repos\Шарики\Шарики\Шарики.cpp(14): warning C4715: sharik: значение возвращается не при всех путях выполнения
+  Шарики.vcxproj -> C:\Users\borga\source\repos\Шарики\x64\Debug\Шарики.exe

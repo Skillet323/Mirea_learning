@@ -1,0 +1,16 @@
++-----------+------------------+-------------+
+| Фирма     | Модель           | Цена (руб.) |
++-----------+------------------+-------------+
+| Husqvarna | Automower 105    |       50000 |
+| Husqvarna | Automower 310    |       90000 |
+| Husqvarna | Automower 430X   |      150000 |
+| Bosch     | Indego S+ 350    |       60000 |
+| Bosch     | Indego M 700     |      100000 |
+| Bosch     | Indego M+ 800    |      130000 |
+| Gardena   | Sileno city 500  |       55000 |
+| Gardena   | Sileno life 1000 |       80000 |
+| Gardena   | Sileno city 2500 |      110000 |
+| Robomow   | RX12u            |       40000 |
+| Robomow   | RC308            |       70000 |
+| Robomow   | RC312            |      100000 |
++-----------+------------------+-------------+

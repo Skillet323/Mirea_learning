@@ -1,0 +1,9 @@
+﻿  rggeweherhtehth4h4.cpp
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(40,18): warning C4101: prev: неиспользованная локальная переменная
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(117,25): warning C4101: z: неиспользованная локальная переменная
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(117,28): warning C4101: p: неиспользованная локальная переменная
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(117,22): warning C4101: y: неиспользованная локальная переменная
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(117,19): warning C4101: x: неиспользованная локальная переменная
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(54): warning C4715: posledovatelnost: значение возвращается не при всех путях выполнения
+C:\Users\borga\source\repos\rggeweherhtehth4h4\rggeweherhtehth4h4\rggeweherhtehth4h4.cpp(37): warning C4715: Arab: значение возвращается не при всех путях выполнения
+  rggeweherhtehth4h4.vcxproj -> C:\Users\borga\source\repos\rggeweherhtehth4h4\x64\Debug\rggeweherhtehth4h4.exe

@@ -1,0 +1,6 @@
+﻿  1.cpp
+C:\Users\borga\source\repos\1\1.cpp(86,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\borga\source\repos\1\1.cpp(195,14): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\borga\source\repos\1\1.cpp(297,14): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\borga\source\repos\1\1.cpp(216,11): warning C4101: t: неиспользованная локальная переменная
+  1.vcxproj -> C:\Users\borga\source\repos\1\x64\Debug\1.exe

@@ -1,0 +1,5 @@
+﻿  ConsoleApplication3.cpp
+C:\Users\borga\source\repos\ConsoleApplication3\ConsoleApplication3\ConsoleApplication3.cpp(18,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\borga\source\repos\ConsoleApplication3\ConsoleApplication3\ConsoleApplication3.cpp(63,16): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+C:\Users\borga\source\repos\ConsoleApplication3\ConsoleApplication3\ConsoleApplication3.cpp(64,34): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+  ConsoleApplication3.vcxproj -> C:\Users\borga\source\repos\ConsoleApplication3\x64\Debug\ConsoleApplication3.exe
