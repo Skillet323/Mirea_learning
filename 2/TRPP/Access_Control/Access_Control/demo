@@ -1,0 +1,12 @@
+HEAD
+demo some code here:
+{
+	def demo(mode):
+		return model.fit(some_data)
+}
+=======
+New 
+Data
+x=5
+y=3
+>>>>>>> branch2

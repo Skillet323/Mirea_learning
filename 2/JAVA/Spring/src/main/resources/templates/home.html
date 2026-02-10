@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>
+        Добро пожаловать, 
+        <span th:text="${username}">Пользователь</span>
+    </h1>
+    <h2>Обратная связь</h2> 
+    <form th:action="@{/home}" method="post">
+        <input type="hidden" name="formType" value="feedback" />
+        <label>Имя:</label>
+        <input type="text" name="name" required /><br/>
+        <label>Email:</label>
+        <input type="email" name="email" required /><br/>
+        <label>Сообщение:</label>
+        <textarea name="message" required></textarea><br/>
+        <button type="submit">Отправить</button>
+    </form>
+    
+    <p th:if="${feedback}" th:text="${feedback}"></p> 
+</body>
+</html>

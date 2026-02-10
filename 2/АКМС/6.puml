@@ -1,0 +1,32 @@
+@startuml
+'
+' Упрощённая и сгруппированная диаграмма развертывания с одним актёром и абстрактными компонентами
+'
+actor User
+
+package "Клиентский интерфейс" {
+  component Interface as UI
+}
+
+package "Системные компоненты" {
+  component "Анализ симптомов"          as SymptomAnalyzer
+  component "Система консультаций"     as ConsultationEngine
+  component "Подбор препаратов"        as DrugSelector
+  component "Сервис расчёта стоимости"  as CostCalculator
+  component "Оформление заказов"       as OrderBuilder
+  database  "База данных препаратов"    as DrugDB
+}
+
+' Взаимодействия пользователя с системой
+User --> UI : Обращение пользователя
+UI --> SymptomAnalyzer       : Передаёт обращение
+SymptomAnalyzer --> ConsultationEngine : Передаёт анализ симптомов
+ConsultationEngine --> DrugSelector     : Передаёт консультацию
+DrugSelector --> DrugDB                : Запрос справочных данных
+DrugDB --> DrugSelector                : Возвращает данные
+DrugSelector --> CostCalculator        : Передаёт подобранные препараты
+CostCalculator --> OrderBuilder        : Передаёт рассчитанную стоимость и препараты
+OrderBuilder --> UI                    : Возвращает сформированный заказ
+UI --> User                            : Отображает ответ чат-бота
+
+@enduml

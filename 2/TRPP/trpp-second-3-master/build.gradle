@@ -1,0 +1,95 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.micronaut.application") version "1.3.4"
+    id 'checkstyle'
+    id 'maven-publish'
+}
+
+version = "0.1"
+group = "ru.mirea.trppsecond3"
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    runtime("undertow")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("ru.mirea.trppsecond3.*")
+    }
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.18'
+    compileOnly 'org.projectlombok:lombok:1.18.18'
+
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("javax.annotation:javax.annotation-api")
+    implementation("org.apache.logging.log4j:log4j-core:2.12.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-api:2.12.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.12.1")
+    // Для Micronaut
+    implementation 'io.micronaut:micronaut-http'
+    annotationProcessor 'io.micronaut:micronaut-http'
+
+    // Для Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // Для OpenCSV
+    implementation 'com.opencsv:opencsv:5.6'
+
+    // Для HttpResponse (Micronaut)
+    implementation 'io.micronaut:micronaut-http-server'
+}
+
+
+application {
+    mainClass.set("ru.mirea.trppsecond3.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
+
+compileJava {
+    options.warnings = true
+    options.deprecation = true
+    options.compilerArgs += ["-Xlint:all"]
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    options.warnings = true
+    options.deprecation = true
+    options.compilerArgs += ["-Xlint:all"]
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+shadowJar {
+    archivesBaseName = "${project.name}_Боргачев"
+    libsDirName = "${project.name}"
+    classifier('')
+}
+
+checkstyle {
+    toolVersion '7.8.1'
+    configFile file("config/checkstyle/checkstyle.xml")
+}
+
+checkstyleMain {
+    source ='src/main/java'
+}
+
+checkstyleTest {
+    source ='src/test/java'
+}

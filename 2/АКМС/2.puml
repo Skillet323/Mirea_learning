@@ -1,0 +1,31 @@
+@startuml DeploymentDiagram
+skinparam node {
+  BackgroundColor LightBlue
+  FontSize 12
+}
+
+title Диаграмма развертывания системы чат-бота
+
+node "Клиентское устройство" <<Workstation>> as Client {
+  component "Интерфейс приложения"
+  component "Интерфейс чат-бота"
+}
+
+node "Сервер приложений" <<Application Server>> as AppServer {
+  component "Система для оформления заказа"
+  component "Система предоставления консультации"
+  component "Сервис расчета стоимости лечения"
+  component "Система управления безопасностью данных"
+  component "Система анализа симптомов"
+  component "Система подбора препаратов"
+  component "Система подбора аналогов"
+}
+
+node "Сервер баз данных" <<Database Server>> as DBServer {
+  database "Препараты"
+}
+
+' Сетевые связи
+Client --> AppServer : HTTP/HTTPS
+AppServer --> DBServer : JDBC/SQL
+@enduml

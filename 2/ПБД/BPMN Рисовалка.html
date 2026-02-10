@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<!-- saved from url=(0019)https://bpmncat.ru/ -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPMN Рисовалка</title>
+
+    <!-- Подключаем стили для BPMN и Font Awesome -->
+    <link rel="stylesheet" href="./BPMN Рисовалка_files/all.min.css">
+    <link rel="stylesheet" href="./BPMN Рисовалка_files/diagram-js.css">
+    <link rel="stylesheet" href="./BPMN Рисовалка_files/bpmn-js.css">
+    <link rel="stylesheet" href="./BPMN Рисовалка_files/bpmn.css">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .canvas {
+            flex-grow: 1;
+            width: 100%;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        #buttons-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+
+        #buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        #buttons button i {
+            margin-right: 8px;
+        }
+
+        #buttons button:hover {
+            background-color: #45a049;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .bjs-powered-by {
+            display: none;
+        }
+
+        /* Стили для попапов */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 10001;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .popup h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .popup .link-container,
+        .popup .export-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .popup button.copy-button,
+        .popup button.export-button {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup button.copy-button:hover,
+        .popup button.export-button:hover {
+            background-color: #0b7dda;
+        }
+
+        .popup button#closePopup {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup button#closePopup:hover {
+            background-color: #da190b;
+        }
+
+        /* Стили для меню-бургера */
+        .burger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .burger-line {
+            width: 100%;
+            height: 5px;
+            background-color: black;
+            transition: all 0.3s ease;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background-color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: right 0.3s ease;
+            z-index: 10000;
+        }
+
+        .menu.open {
+            right: 0;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            background-color: rgb(63, 63, 63);
+            font-size: 18px;
+            margin: 20px 0;
+            width: 80%;
+            height: 50px;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .menu a:hover {
+            background-color: #555;
+        }
+
+        .burger-menu.open .burger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 8px);
+        }
+
+        .burger-menu.open .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.open .burger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -8px);
+        }
+    </style>
+<style type="text/css" id="operaUserStyle"></style></head>
+<body class="">
+    <!-- Бургер-меню -->
+    <div class="burger-menu" id="burgerMenu">
+        <div class="burger-line"></div>
+        <div class="burger-line"></div>
+        <div class="burger-line"></div>
+    </div>
+
+    <!-- Скрытое меню -->
+    <div class="menu" id="menu">
+        <a href="https://bpmncat.ru/" target="_blank">Открыть новую вкладку</a>
+    </div>
+
+    <div class="canvas" id="canvas"><div class="bjs-container" style="width: 100%; height: 100%; position: relative;"><a href="http://bpmn.io/" target="_blank" class="bjs-powered-by" title="Powered by bpmn.io" style="color: rgb(64, 64, 64); position: absolute; bottom: 15px; right: 15px; z-index: 100;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14.02 5.57" width="53" height="21" style="vertical-align: middle;"><path fill="currentColor" d="M1.88.92v.14c0 .41-.13.68-.4.8.33.14.46.44.46.86v.33c0 .61-.33.95-.95.95H0V0h.95c.65 0 .93.3.93.92zM.63.57v1.06h.24c.24 0 .38-.1.38-.43V.98c0-.28-.1-.4-.32-.4zm0 1.63v1.22h.36c.2 0 .32-.1.32-.39v-.35c0-.37-.12-.48-.4-.48H.63zM4.18.99v.52c0 .64-.31.98-.94.98h-.3V4h-.62V0h.92c.63 0 .94.35.94.99zM2.94.57v1.35h.3c.2 0 .3-.09.3-.37v-.6c0-.29-.1-.38-.3-.38h-.3zm2.89 2.27L6.25 0h.88v4h-.6V1.12L6.1 3.99h-.6l-.46-2.82v2.82h-.55V0h.87zM8.14 1.1V4h-.56V0h.79L9 2.4V0h.56v4h-.64zm2.49 2.29v.6h-.6v-.6zM12.12 1c0-.63.33-1 .95-1 .61 0 .95.37.95 1v2.04c0 .64-.34 1-.95 1-.62 0-.95-.37-.95-1zm.62 2.08c0 .28.13.39.33.39s.32-.1.32-.4V.98c0-.29-.12-.4-.32-.4s-.33.11-.33.4z"></path><path fill="currentColor" d="M0 4.53h14.02v1.04H0zM11.08 0h.63v.62h-.63zm.63 4V1h-.63v2.98z"></path></svg></a><div class="djs-container djs-parent djs-palette-shown djs-palette-two-column djs-palette-open" style="position: relative; overflow: hidden; width: 100%; height: 100%;"><div class="djs-tooltip-container" style="position: absolute; width: 0px; height: 0px; transform: matrix(0.861, 0, 0, 0.861, 63.67, -23.653);"></div><div class="djs-overlay-container" style="position: absolute; width: 0px; height: 0px; transform-origin: left top; transform: matrix(0.861, 0, 0, 0.861, 63.67, -23.653);"></div><svg width="100%" height="100%" data-element-id="Collaboration_1dimsor" class=""><g class="viewport" transform="matrix(0.8608918190002441,0,0,0.8608918190002441,63.670380587434465,-23.652587125488935)"><g class="layer-base"></g><g class="layer-root-2" data-element-id="Collaboration_1dimsor"><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Participant_0x8dg3l" style="display: block;" transform="matrix(1 0 0 1 170 -50)"><g class="djs-visual"><rect x="0" y="0" width="1248" height="715" rx="0" ry="0" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.95;"></rect><path style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px;" d="M30,0L30,715"></path><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);" transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 0 715)"><tspan x="172.50625306367874" y="18.6">Управление запасами сырья предприятия "Сталелитейный завод"</tspan></text></g><rect x="-5" y="-5" rx="4" width="1258" height="725" class="djs-outline" style="fill: none;"></rect><rect class="djs-hit djs-hit-no-move" x="0" y="0" width="1248" height="715" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-click-stroke" x="0" y="0" width="1248" height="715" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-all" x="0" y="0" width="30" height="715" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect></g><g class="djs-children"><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Lane_1jkdea3" style="display: block;" transform="matrix(1 0 0 1 200 365)"><g class="djs-visual"><rect x="0" y="0" width="1218" height="185" rx="0" ry="0" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.25;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);" transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 0 185)"><tspan x="28.21875" y="18.6">Менеджер по закупкам</tspan></text></g><rect x="-5" y="-5" rx="4" width="1228" height="195" class="djs-outline" style="fill: none;"></rect><rect class="djs-hit djs-hit-no-move" x="0" y="0" width="1218" height="185" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-click-stroke" x="0" y="0" width="1218" height="185" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-all" x="0" y="0" width="30" height="185" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Lane_06jlrzw" style="display: block;" transform="matrix(1 0 0 1 200 550)"><g class="djs-visual"><rect x="0" y="0" width="1218" height="115" rx="0" ry="0" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.25;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);" transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 0 115)"><tspan x="8.037498474121094" y="18.6">Поставщик сырья</tspan></text></g><rect x="-5" y="-5" rx="4" width="1228" height="125" class="djs-outline" style="fill: none;"></rect><rect class="djs-hit djs-hit-no-move" x="0" y="0" width="1218" height="115" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-click-stroke" x="0" y="0" width="1218" height="115" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-all" x="0" y="0" width="30" height="115" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Lane_0949knd" style="display: block;" transform="matrix(1 0 0 1 200 -50)"><g class="djs-visual"><rect x="0" y="0" width="1218" height="415" rx="0" ry="0" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.25;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);" transform="matrix(-1.83697e-16 -1 1 -1.83697e-16 0 415)"><tspan x="188.8855465054512" y="18.6">Логист</tspan></text></g><rect x="-5" y="-5" rx="4" width="1228" height="425" class="djs-outline" style="fill: none;"></rect><rect class="djs-hit djs-hit-no-move" x="0" y="0" width="1218" height="415" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-click-stroke" x="0" y="0" width="1218" height="415" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect class="djs-hit djs-hit-all" x="0" y="0" width="30" height="415" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_1w4e0sa" style="display: block;" transform="matrix(1 0 0 1 262 127)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="23" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_0b7mwc5" style="display: block;" transform="matrix(1 0 0 1 342 -30)"><g class="djs-visual"><path d="m 0,0 28.23529411764706,0 7.058823529411765,8.196721311475411 0,40.98360655737705 -35.294117647058826,0 0,-49.18032786885246 28.23529411764706,0 0,8.196721311475411 7.058823529411765,0" style="fill: white; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill-opacity: 0.95;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><path d="M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z" transform="translate(-6, -6)" class="djs-outline" style="stroke-width: 2px; fill: none;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_12eqfm3" style="display: block;" transform="matrix(1 0 0 1 400 105)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="10.299999237060547" y="22">Ознакомиться </tspan><tspan x="28.518749237060547" y="36.4">с типом </tspan><tspan x="9.26327896118164" y="50.8">недостающего </tspan><tspan x="32.97500038146973" y="65.19999999999999">сырья</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_1w2zl0q" style="display: block;" transform="matrix(1 0 0 1 580 105)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="19.920116424560547" y="29.200000000000003">Проверить </tspan><tspan x="7.987499237060547" y="43.6">наличие сырья</tspan><tspan x="22.051366806030273" y="58">на складе</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_1l1hwjo" style="display: block;" transform="matrix(1 0 0 1 552 430)"><g class="djs-visual"><path d="m 0,0 28.23529411764706,0 7.058823529411765,8.196721311475411 0,40.98360655737705 -35.294117647058826,0 0,-49.18032786885246 28.23529411764706,0 0,8.196721311475411 7.058823529411765,0" style="fill: white; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill-opacity: 0.95;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><path d="M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z" transform="translate(-6, -6)" class="djs-outline" style="stroke-width: 2px; fill: none;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_061vmv8" style="display: block;" transform="matrix(1 0 0 1 692 -30)"><g class="djs-visual"><path d="m 0,0 28.23529411764706,0 7.058823529411765,8.196721311475411 0,40.98360655737705 -35.294117647058826,0 0,-49.18032786885246 28.23529411764706,0 0,8.196721311475411 7.058823529411765,0" style="fill: white; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill-opacity: 0.95;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><path d="M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z" transform="translate(-6, -6)" class="djs-outline" style="stroke-width: 2px; fill: none;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_1y4nu42" style="display: block;" transform="matrix(1 0 0 1 1020 105)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="20.5" y="29.200000000000003">Перевезти </tspan><tspan x="24.553319931030273" y="43.6">сырье со </tspan><tspan x="14.336132049560547" y="58">склада в цех</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0gfmd8t" style="display: block;" transform="matrix(1 0 0 1 912 127)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.95;"></circle><circle cx="18" cy="18" r="15" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: none;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="23" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_06di3zm" style="display: block;" transform="matrix(1 0 0 1 1192 127)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 4px; fill: white; fill-opacity: 0.95;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="24" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Gateway_1iaitz6" style="display: block;" transform="matrix(1 0 0 1 765 120)"><g class="djs-visual"><polygon points="25,0 50,25 25,50 0,25" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></polygon><path d="m 16,15 7.42857142857143,9.714285714285715 -7.42857142857143,9.714285714285715 3.428571428571429,0 5.714285714285715,-7.464228571428572 5.714285714285715,7.464228571428572 3.428571428571429,0 -7.42857142857143,-9.714285714285715 7.42857142857143,-9.714285714285715 -3.428571428571429,0 -5.714285714285715,7.464228571428572 -5.714285714285715,-7.464228571428572 -3.428571428571429,0 z" style="fill: rgb(34, 36, 42); stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="50" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="2" y="2" rx="4" width="46" height="46" class="djs-outline" style="transform-box: fill-box; transform: rotate(45deg); transform-origin: center center; fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0uovrne" style="display: block;" transform="matrix(1 0 0 1 772 247)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.95;"></circle><circle cx="18" cy="18" r="15" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: none;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="23" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape hover" data-element-id="Activity_0ch5qdx" style="display: block;" transform="matrix(1 0 0 1 740 415)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="9.13437271118164" y="14.799999999999999">Проанализиро</tspan><tspan x="20.410741806030273" y="29.199999999999996">вать какое </tspan><tspan x="18.318944931030273" y="43.599999999999994">количество </tspan><tspan x="14.00058364868164" y="57.99999999999999">сырья нужно </tspan><tspan x="25.981639862060547" y="72.39999999999999">заказать</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_0u8iws8" style="display: block;" transform="matrix(1 0 0 1 900 415)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="31.312108993530273" y="29.200000000000003">Выбор </tspan><tspan x="16.56406021118164" y="43.6">поставщика </tspan><tspan x="32.97500038146973" y="58">сырья</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0573byf" style="display: block;" transform="matrix(1 0 0 1 1052 437)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: white; fill-opacity: 0.95;"></circle><circle cx="18" cy="18" r="15" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; fill: none;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="23" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_1nnqw7q" style="display: block;" transform="matrix(1 0 0 1 1020 225)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="19.253515243530273" y="29.200000000000003">Получение </tspan><tspan x="24.903514862060547" y="43.6">сырья от </tspan><tspan x="16.56406021118164" y="58">поставщика</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0h01qgf" style="display: block;" transform="matrix(1 0 0 1 1322 247)"><g class="djs-visual"><circle cx="18" cy="18" r="18" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 4px; fill: white; fill-opacity: 0.95;"></circle></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="36" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><circle cx="18" cy="18" r="24" class="djs-outline" style="fill: none;"></circle></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Activity_1fwudob" style="display: block;" transform="matrix(1 0 0 1 1170 225)"><g class="djs-visual"><rect x="0" y="0" width="100" height="80" rx="10" ry="10" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill: white; fill-opacity: 0.95;"></rect><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 12px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="9.924999237060547" y="22">Распределени</tspan><tspan x="8.195507049560547" y="36.4">е сырья между</tspan><tspan x="9.956249237060547" y="50.8">предприятием </tspan><tspan x="21.487499237060547" y="65.19999999999999">и складом</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="100" height="80" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="14" width="110" height="90" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_03gz6tp" style="display: block;" transform="matrix(1 0 0 1 932 580)"><g class="djs-visual"><path d="m 0,0 28.23529411764706,0 7.058823529411765,8.196721311475411 0,40.98360655737705 -35.294117647058826,0 0,-49.18032786885246 28.23529411764706,0 0,8.196721311475411 7.058823529411765,0" style="fill: white; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill-opacity: 0.95;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="36" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><path d="M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z" transform="translate(-6, -6)" class="djs-outline" style="stroke-width: 2px; fill: none;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataStoreReference_0c0gzwk" style="display: block;" transform="matrix(1 0 0 1 425 430)"><g class="djs-visual"><path d="m  0,6.65 l  0,36.885245901639344 c  1.639344262295082,8.196721311475411 47.540983606557376,8.196721311475411  49.18032786885246,0 l  0,-36.885245901639344 c -1.639344262295082,-8.196721311475411 -47.540983606557376,-8.196721311475411 -49.18032786885246,0c  1.639344262295082,8.196721311475411 47.540983606557376,8.196721311475411  49.18032786885246,0 m  -49.18032786885246,5.737704918032787c  1.639344262295082,8.196721311475411 47.540983606557376,8.196721311475411 49.18032786885246,0m  -49.18032786885246,5.737704918032787c  1.639344262295082,8.196721311475411 47.540983606557376,8.196721311475411  49.18032786885246,0" style="fill: white; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; fill-opacity: 0.95;"></path></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="50" height="50" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><path d="M1.03845 48.1347C1.03845 49.3511 1.07295 50.758 1.38342 52.064C1.69949 53.3938 2.32428 54.7154 3.56383 55.6428C6.02533 57.4841 10.1161 58.7685 14.8212 59.6067C19.5772 60.4538 25.1388 60.8738 30.6831 60.8738C36.2276 60.8738 41.7891 60.4538 46.545 59.6067C51.2504 58.7687 55.3412 57.4842 57.8028 55.6429C59.0424 54.7156 59.6673 53.3938 59.9834 52.064C60.2938 50.7579 60.3285 49.351 60.3285 48.1344V13.8415C60.3285 12.6249 60.2938 11.218 59.9834 9.91171C59.6673 8.58194 59.0423 7.2602 57.8027 6.33294C55.341 4.49168 51.2503 3.20723 46.545 2.36914C41.7891 1.522 36.2276 1.10204 30.6831 1.10205C25.1388 1.10206 19.5772 1.52206 14.8213 2.36923C10.1162 3.20734 6.02543 4.49183 3.5639 6.33314C2.32433 7.26038 1.69951 8.58206 1.38343 9.91181C1.07295 11.2179 1.03845 12.6247 1.03845 13.8411V48.1347Z" transform="translate(-6, -6)" class="djs-outline" style="stroke-width: 2px; fill: none;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_08amw1x" style="display: block;"><g class="djs-visual"><defs><marker id="marker-87sxbd0ncbycn0o6mzpw6v14j" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-87sxbd0ncbycn0o6mzpw6v14j&quot;);" d="M298,145L400,145"></path></g><rect x="293" y="140" rx="4" width="112" height="10" class="djs-outline" style="fill: none;"></rect><path d="M298,145L400,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_08emy50" style="display: block;"><g class="djs-visual"><defs><marker id="marker-8vpcuiluaxesulabs5fgivvo8" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-8vpcuiluaxesulabs5fgivvo8&quot;);" d="M500,145L580,145"></path></g><rect x="495" y="140" rx="4" width="90" height="10" class="djs-outline" style="fill: none;"></rect><path d="M500,145L580,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0ivi7zt" style="display: block;"><g class="djs-visual"><defs><marker id="marker-591j3ie7sbfxie05ugyx1ze41" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-591j3ie7sbfxie05ugyx1ze41&quot;);" d="M680,145L765,145"></path></g><rect x="675" y="140" rx="4" width="95" height="10" class="djs-outline" style="fill: none;"></rect><path d="M680,145L765,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0l6tbf7" style="display: block;"><g class="djs-visual"><defs><marker id="marker-048yq22gb92kgguqt1rtbbre5" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-048yq22gb92kgguqt1rtbbre5&quot;);" d="M948,145L1020,145"></path></g><rect x="943" y="140" rx="4" width="82" height="10" class="djs-outline" style="fill: none;"></rect><path d="M948,145L1020,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_12k07im" style="display: block;"><g class="djs-visual"><defs><marker id="marker-6oc0x9o39a1ci3y6xmsng4cyk" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-6oc0x9o39a1ci3y6xmsng4cyk&quot;);" d="M1120,145L1192,145"></path></g><rect x="1115" y="140" rx="4" width="82" height="10" class="djs-outline" style="fill: none;"></rect><path d="M1120,145L1192,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0fstmra" style="display: block;"><g class="djs-visual"><defs><marker id="marker-3vljdpnaa5abcf0kup2c3u5f2" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-3vljdpnaa5abcf0kup2c3u5f2&quot;);" d="M815,145L912,145"></path></g><rect x="810" y="140" rx="4" width="107" height="10" class="djs-outline" style="fill: none;"></rect><path d="M815,145L912,145" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0cv6u9j" style="display: block;"><g class="djs-visual"><defs><marker id="marker-4zb2wp2um9akml01jqnspbnw7" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-4zb2wp2um9akml01jqnspbnw7&quot;);" d="M790,170L790,247"></path></g><rect x="785" y="165" rx="4" width="10" height="87" class="djs-outline" style="fill: none;"></rect><path d="M790,170L790,247" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_01ne4ej" style="display: block;"><g class="djs-visual"><defs><marker id="marker-a6ljijazntunnroito0g8q1ns" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-a6ljijazntunnroito0g8q1ns&quot;);" d="M790,283L790,415"></path></g><rect x="785" y="278" rx="4" width="10" height="142" class="djs-outline" style="fill: none;"></rect><path d="M790,283L790,415" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_1ht9a4a" style="display: block;"><g class="djs-visual"><defs><marker id="marker-3s0ot00uosouiytdlh30ctp0o" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-3s0ot00uosouiytdlh30ctp0o&quot;);" d="M840,455L900,455"></path></g><rect x="835" y="450" rx="4" width="70" height="10" class="djs-outline" style="fill: none;"></rect><path d="M840,455L900,455" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0djhy9l" style="display: block;"><g class="djs-visual"><defs><marker id="marker-dqrqjpk0bbkti9kmue0hyvpku" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-dqrqjpk0bbkti9kmue0hyvpku&quot;);" d="M1000,455L1052,455"></path></g><rect x="995" y="450" rx="4" width="62" height="10" class="djs-outline" style="fill: none;"></rect><path d="M1000,455L1052,455" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_1t5e4y5" style="display: block;"><g class="djs-visual"><defs><marker id="marker-24azapdxn8bhl9soiwnjcu2uo" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-24azapdxn8bhl9soiwnjcu2uo&quot;);" d="M1070,437L1070,305"></path></g><rect x="1065" y="300" rx="4" width="10" height="142" class="djs-outline" style="fill: none;"></rect><path d="M1070,437L1070,305" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0z7ld73" style="display: block;"><g class="djs-visual"><defs><marker id="marker-62lwm5otq6sfpd4b2zdzt910g" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-62lwm5otq6sfpd4b2zdzt910g&quot;);" d="M1120,265L1170,265"></path></g><rect x="1115" y="260" rx="4" width="60" height="10" class="djs-outline" style="fill: none;"></rect><path d="M1120,265L1170,265" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="Flow_0etczq4" style="display: block;"><g class="djs-visual"><defs><marker id="marker-6p64jz12gtm5l2o4r9w0owdk7" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15 Z" style="stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1px; fill: rgb(34, 36, 42);"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-6p64jz12gtm5l2o4r9w0owdk7&quot;);" d="M1270,265L1322,265"></path></g><rect x="1265" y="260" rx="4" width="62" height="10" class="djs-outline" style="fill: none;"></rect><path d="M1270,265L1322,265" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_0b7mwc5_label" style="display: block;" transform="matrix(1 0 0 1 322 27)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Информация о </tspan><tspan x="22.574707984924316" y="23.099999999999998">сырье</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="77" height="27" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="87" height="37" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_061vmv8_label" style="display: block;" transform="matrix(1 0 0 1 666 27)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Сырье на складе</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="88" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="98" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Flow_0fstmra_label" style="display: block;" transform="matrix(1 0 0 1 857 127)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Да</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="14" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="24" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Flow_0cv6u9j_label" style="display: block;" transform="matrix(1 0 0 1 795 206)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Нет</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="20" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="30" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_1l1hwjo_label" style="display: block;" transform="matrix(1 0 0 1 532 487)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Информация о </tspan><tspan x="22.574707984924316" y="23.099999999999998">сырье</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="77" height="27" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="87" height="37" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataObjectReference_03gz6tp_label" style="display: block;" transform="matrix(1 0 0 1 917 637)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Прейскурант</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="67" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="77" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0573byf_label" style="display: block;" transform="matrix(1 0 0 1 1036 480)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="2.6312522888183594" y="9.899999999999999">Заказ сырья </tspan><tspan x="0" y="23.099999999999998">поставщикам</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="69" height="27" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="79" height="37" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0h01qgf_label" style="display: block;" transform="matrix(1 0 0 1 1301 290)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Закрыть заявку</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="79" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="89" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_06di3zm_label" style="display: block;" transform="matrix(1 0 0 1 1171 170)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Закрыть заявку</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="79" height="14" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="89" height="24" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0gfmd8t_label" style="display: block;" transform="matrix(1 0 0 1 889 170)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="14.175048828125" y="9.899999999999999">Сообщить </tspan><tspan x="10.60595703125" y="23.099999999999998">грузчикам о </tspan><tspan x="1.391845703125" y="36.3">необходимости </tspan><tspan x="0" y="49.5">перевоза сырья</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="82" height="53" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="92" height="63" class="djs-outline" style="fill: none;"></rect></g></g></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_1w4e0sa_label" style="display: block;" transform="matrix(1 0 0 1 243 170)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="20.35209846496582" y="9.899999999999999">В цеху </tspan><tspan x="0" y="23.099999999999998">заканчивается </tspan><tspan x="21.297558784484863" y="36.3">сырье</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="75" height="40" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="85" height="50" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataOutputAssociation_083yu6q" style="display: block;"><g class="djs-visual"><defs><marker id="marker-9pfyja400hnlny97lydhq1kgv" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-9pfyja400hnlny97lydhq1kgv&quot;); stroke-dasharray: 0, 5;" d="M280,127L280,-5C280,-7.5,282.5,-10,285,-10L342,-10"></path></g><rect x="275" y="-15" rx="4" width="72" height="147" class="djs-outline" style="fill: none;"></rect><path d="M280,127L280,-10L342,-10" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_1wiid2d" style="display: block;"><g class="djs-visual"><defs><marker id="marker-enwcy6mkq2mdaqm2q4xvv848h" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-enwcy6mkq2mdaqm2q4xvv848h&quot;); stroke-dasharray: 0, 5;" d="M378,-5L445,-5C447.5,-5,450,-2.5,450,0L450,105"></path></g><rect x="373" y="-10" rx="4" width="82" height="120" class="djs-outline" style="fill: none;"></rect><path d="M378,-5L450,-5L450,105" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_0alsfut" style="display: block;"><g class="djs-visual"><defs><marker id="marker-405rs0o5ihbc0mfpivp4f3edo" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-405rs0o5ihbc0mfpivp4f3edo&quot;); stroke-dasharray: 0, 5;" d="M378,-5L595,-5C597.5,-5,600,-2.5,600,0L600,105"></path></g><rect x="373" y="-10" rx="4" width="232" height="120" class="djs-outline" style="fill: none;"></rect><path d="M378,-5L600,-5L600,105" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_1jy3ity" style="display: block;"><g class="djs-visual"><defs><marker id="marker-aea6w4kriyq9kzm8ntsc0dlr8" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-aea6w4kriyq9kzm8ntsc0dlr8&quot;); stroke-dasharray: 0, 5;" d="M450,430L450,185"></path></g><rect x="445" y="180" rx="4" width="10" height="255" class="djs-outline" style="fill: none;"></rect><path d="M450,430L450,185" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_1lc52of" style="display: block;"><g class="djs-visual"><defs><marker id="marker-5yitc7e4wo1ejd8h7sjl2rrtp" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-5yitc7e4wo1ejd8h7sjl2rrtp&quot;); stroke-dasharray: 0, 5;" d="M692,-5L655,-5C652.5,-5,650,-2.5,650,0L650,40C650,42.5,650,47.5,650,50L650,105"></path></g><rect x="645" y="-10" rx="4" width="52" height="120" class="djs-outline" style="fill: none;"></rect><path d="M692,-5L650,-5L650,45L650,105" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_1pl9h21" style="display: block;"><g class="djs-visual"><defs><marker id="marker-4ybmgmomkegokissccux7mzwh" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-4ybmgmomkegokissccux7mzwh&quot;); stroke-dasharray: 0, 5;" d="M588,455L740,455"></path></g><rect x="583" y="450" rx="4" width="162" height="10" class="djs-outline" style="fill: none;"></rect><path d="M588,455L740,455" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_13lkppa" style="display: block;"><g class="djs-visual"><defs><marker id="marker-8qvn2jaep253v4jxo5tn6fxo7" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-8qvn2jaep253v4jxo5tn6fxo7&quot;); stroke-dasharray: 0, 5;" d="M450,480L450,530C450,532.5,452.5,535,455,535L785,535C787.5,535,790,532.5,790,530L790,495"></path></g><rect x="445" y="475" rx="4" width="350" height="65" class="djs-outline" style="fill: none;"></rect><path d="M450,480L450,535L790,535L790,495" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-connection" data-element-id="DataInputAssociation_1fqa35x" style="display: block;"><g class="djs-visual"><defs><marker id="marker-4zsdc2t0egkkw0kgycg1j1ldg" viewBox="0 0 20 20" refX="11" refY="10" markerWidth="10" markerHeight="10" orient="auto"><path d="M 1 5 L 11 10 L 1 15" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 1.5px; stroke-dasharray: 10000, 1;"></path></marker></defs><path data-corner-radius="5" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(34, 36, 42); stroke-width: 2px; marker-end: url(&quot;#marker-4zsdc2t0egkkw0kgycg1j1ldg&quot;); stroke-dasharray: 0, 5;" d="M950,580L950,495"></path></g><rect x="945" y="490" rx="4" width="10" height="95" class="djs-outline" style="fill: none;"></rect><path d="M950,580L950,495" class="djs-hit djs-hit-stroke" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></path></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Gateway_1iaitz6_label" style="display: block;" transform="matrix(1 0 0 1 756 90)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Сырье есть в </tspan><tspan x="9.77001953125" y="23.099999999999998">наличии?</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="69" height="27" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="79" height="37" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="Event_0uovrne_label" style="display: block;" transform="matrix(1 0 0 1 674 255)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="0" y="9.899999999999999">Передать заявку</tspan><tspan x="6.601219177246094" y="23.099999999999998">менеджеру по </tspan><tspan x="19.667333602905273" y="36.3">закупкам</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="86" height="40" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="96" height="50" class="djs-outline" style="fill: none;"></rect></g></g><g class="djs-group"><g class="djs-element djs-shape" data-element-id="DataStoreReference_0c0gzwk_label" style="display: block;" transform="matrix(1 0 0 1 332 445)"><g class="djs-visual"><text lineHeight="1.2" class="djs-label" style="font-family: Arial, sans-serif; font-size: 11px; font-weight: normal; fill: rgb(34, 36, 42);"><tspan x="18.172655880451202" y="9.899999999999999">Детали, </tspan><tspan x="0" y="23.099999999999998">производимые </tspan><tspan x="0.9976577758789062" y="36.3">предприятием</tspan></text></g><rect class="djs-hit djs-hit-all" x="0" y="0" width="76" height="40" style="fill: none; stroke-opacity: 0; stroke: white; stroke-width: 15px;"></rect><rect x="-5" y="-5" rx="4" width="86" height="50" class="djs-outline" style="fill: none;"></rect></g></g></g><g class="layer-selectionOutline"></g><g class="layer-resizers"></g><g class="layer-snap"><path d="M-100000,565 L+100000,565" class="djs-snap-line" style="display: none;"></path><path d="M 170,-100000 L 170, +100000" class="djs-snap-line" style="display: none;"></path></g><g class="layer-complex-preview"></g><g class="layer-overlays"><g data-element-id="DataInputAssociation_1wiid2d" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 414 -5)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-24" y="-8.5" width="48" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger vertical" data-segment-idx="2" transform="matrix(1 0 0 1 450 50)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-36.5" y="-8.5" width="73" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 378 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 105)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataOutputAssociation_083yu6q" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 280 59)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-45.5" y="-8.5" width="91" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger horizontal" data-segment-idx="2" transform="matrix(1 0 0 1 311 -10)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-20.5" y="-8.5" width="41" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 280 127)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 280 -10)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 342 -10)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_0alsfut" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 489 -5)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-74" y="-8.5" width="148" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger vertical" data-segment-idx="2" transform="matrix(1 0 0 1 600 50)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-36.5" y="-8.5" width="73" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 378 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 600 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 600 105)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_1lc52of" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 671 -5)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-14" y="-8.5" width="28" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger vertical" data-segment-idx="2" transform="matrix(1 0 0 1 650 20)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-16.5" y="-8.5" width="33" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger vertical" data-segment-idx="3" transform="matrix(1 0 0 1 650 75)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -18.5 0)"></rect><rect x="-20" y="-8.5" width="40" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 692 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 650 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 650 45)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 650 105)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 692 -5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_08amw1x" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 349 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-34" y="-8.5" width="68" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 298 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 400 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_08emy50" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 540 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 11.5 0)"></rect><rect x="-26.5" y="-8.5" width="53" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 500 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 580 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 551.5 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0ivi7zt" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 723 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-28.5" y="-8.5" width="57" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 680 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 765 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0cv6u9j" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 790 209)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 27 0)"></rect><rect x="-25.5" y="-8.5" width="51" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 170)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 247)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 790 236)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0fstmra" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 864 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-32.5" y="-8.5" width="65" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 815 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 912 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0l6tbf7" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 984 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -25.5 0)"></rect><rect x="-24" y="-8.5" width="48" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 948 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1020 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 948 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_12k07im" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 1156 145)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -23.5 0)"></rect><rect x="-24" y="-8.5" width="48" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1120 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1192 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 1132.5 145)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_01ne4ej" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 790 349)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 33 0)"></rect><rect x="-44" y="-8.5" width="88" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 283)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 415)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 790 382)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_1ht9a4a" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 870 455)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-20" y="-8.5" width="40" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 840 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 900 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 840 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0djhy9l" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 1026 455)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-17.5" y="-8.5" width="35" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1000 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1052 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 1052 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_1t5e4y5" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 1070 371)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 8.5 0)"></rect><rect x="-44" y="-8.5" width="88" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1070 437)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1070 305)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 1070 379.5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0z7ld73" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 1145 265)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -8.5 0)"></rect><rect x="-16.5" y="-8.5" width="33" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1120 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1170 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 1170 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="Flow_0etczq4" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 1296 265)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 13 0)"></rect><rect x="-17.5" y="-8.5" width="35" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1270 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 1322 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 1309 265)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_1fqa35x" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 950 538)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 22.5 0)"></rect><rect x="-28.5" y="-8.5" width="57" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 950 580)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 950 495)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 950 560.5)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_1pl9h21" class="djs-bendpoints"><g class="djs-segment-dragger horizontal" data-segment-idx="1" transform="matrix(1 0 0 1 664 455)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -3 0)"></rect><rect x="-50.5" y="-8.5" width="101" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 588 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 740 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 740 455)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_1jy3ity" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 450 308)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-81.5" y="-8.5" width="163" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 430)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 185)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g><g data-element-id="DataInputAssociation_13lkppa" class="djs-bendpoints"><g class="djs-segment-dragger vertical" data-segment-idx="1" transform="matrix(1 0 0 1 450 508)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual"></rect><rect x="-18.5" y="-8.5" width="37" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger horizontal" data-segment-idx="2" transform="matrix(1 0 0 1 620 535)"><g transform="matrix(1 0 0 1 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -74 0)"></rect><rect x="-113.5" y="-8.5" width="227" height="17" class="djs-hit"></rect></g></g><g class="djs-segment-dragger vertical" data-segment-idx="3" transform="matrix(1 0 0 1 790 515)"><g transform="matrix(6.12323e-17 1 -1 6.12323e-17 0 0)"><rect x="-9" y="-3" width="18" height="6" class="djs-visual" transform="matrix(1 0 0 1 -9 0)"></rect><rect x="-13.5" y="-8.5" width="27" height="17" class="djs-hit"></rect></g></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 480)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 450 535)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 535)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint" transform="matrix(1 0 0 1 790 495)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g><g class="djs-bendpoint floating" transform="matrix(1 0 0 1 546 535)"><circle cx="0" cy="0" r="4" class="djs-visual"></circle><circle cx="0" cy="0" r="10" class="djs-hit"></circle></g></g></g></g></svg><ul class="bjs-breadcrumbs"></ul><div class="djs-context-pad-parent"></div><div class="djs-search-container djs-scrollable">
+  <div class="djs-search-input">
+    <svg class="djs-search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M9.0325 8.5H9.625L13.3675 12.25L12.25 13.3675L8.5 9.625V9.0325L8.2975 8.8225C7.4425 9.5575 6.3325 10 5.125 10C2.4325 10 0.25 7.8175 0.25 5.125C0.25 2.4325 2.4325 0.25 5.125 0.25C7.8175 0.25 10 2.4325 10 5.125C10 6.3325 9.5575 7.4425 8.8225 8.2975L9.0325 8.5ZM1.75 5.125C1.75 6.9925 3.2575 8.5 5.125 8.5C6.9925 8.5 8.5 6.9925 8.5 5.125C8.5 3.2575 6.9925 1.75 5.125 1.75C3.2575 1.75 1.75 3.2575 1.75 5.125Z" fill="#22242A"></path>
+    </svg>
+    <input type="text" spellcheck="false" aria-label="Search in diagram">
+  </div>
+  <div class="djs-search-results">
+</div></div><div class="djs-palette two-column open"><div class="djs-palette-entries"><div class="group" data-group="tools"><div class="entry bpmn-icon-hand-tool" draggable="true" data-action="hand-tool" title="Activate hand tool"></div><div class="entry bpmn-icon-lasso-tool" draggable="true" data-action="lasso-tool" title="Activate lasso tool"></div><div class="entry bpmn-icon-space-tool" draggable="true" data-action="space-tool" title="Activate create/remove space tool"></div><div class="entry bpmn-icon-connection-multi" draggable="true" data-action="global-connect-tool" title="Activate global connect tool"></div><hr class="separator"></div><div class="group" data-group="event"><div class="entry bpmn-icon-start-event-none" draggable="true" data-action="create.start-event" title="Create start event"></div><div class="entry bpmn-icon-intermediate-event-none" draggable="true" data-action="create.intermediate-event" title="Create intermediate/boundary event"></div><div class="entry bpmn-icon-end-event-none" draggable="true" data-action="create.end-event" title="Create end event"></div></div><div class="group" data-group="gateway"><div class="entry bpmn-icon-gateway-none" draggable="true" data-action="create.exclusive-gateway" title="Create gateway"></div></div><div class="group" data-group="activity"><div class="entry bpmn-icon-task" draggable="true" data-action="create.task" title="Create task"></div><div class="entry bpmn-icon-subprocess-expanded" draggable="true" data-action="create.subprocess-expanded" title="Create expanded sub-process"></div></div><div class="group" data-group="data-object"><div class="entry bpmn-icon-data-object" draggable="true" data-action="create.data-object" title="Create data object reference"></div></div><div class="group" data-group="data-store"><div class="entry bpmn-icon-data-store" draggable="true" data-action="create.data-store" title="Create data store reference"></div></div><div class="group" data-group="collaboration"><div class="entry bpmn-icon-participant" draggable="true" data-action="create.participant-expanded" title="Create pool/participant"></div></div><div class="group" data-group="artifact"><div class="entry bpmn-icon-group" draggable="true" data-action="create.group" title="Create group"></div></div></div><div class="djs-palette-toggle"></div></div></div></div></div>
+
+    <!-- Контейнер для кнопок -->
+    <div id="buttons-container">
+        <div id="buttons">
+            <button id="copy-elements" title="Скопировать элементы"><i class="fas fa-copy"></i><span class="text">Скопировать элементы</span></button>
+            <button id="paste-elements" title="Вставить элементы"><i class="fas fa-paste"></i><span class="text">Вставить элементы</span></button>
+            <button id="save-diagram" title="Сохранить диаграмму"><i class="fas fa-save"></i><span class="text">Сохранить диаграмму</span></button>
+            <button id="export-diagram" title="Экспортировать диаграмму"><i class="fas fa-file-export"></i><span class="text">Экспортировать диаграмму</span></button>
+            <button id="open-file" title="Загрузить диаграмму"><i class="fas fa-file-upload"></i><span class="text">Загрузить диаграмму</span></button>
+            <button id="get-link" title="Получить ссылку на диаграмму"><i class="fas fa-link"></i><span class="text">Получить ссылку</span></button>
+            <input type="file" id="fileInput" accept=".bpmn,.xml">
+        </div>
+    </div>
+
+    <!-- Попап для ссылки -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <h3>Ссылка на диаграмму</h3>
+        <div class="link-container">
+            <input type="text" id="diagramLink" readonly="" onclick="this.select();" placeholder="Ссылка на диаграмму">
+            <button class="copy-button" id="copyLink"><i class="fas fa-copy"></i> Копировать</button>
+        </div>
+        <button id="closePopup">Закрыть</button>
+    </div>
+
+    <!-- Попап для выбора формата экспорта -->
+    <div class="popup-overlay" id="exportPopupOverlay"></div>
+    <div class="popup" id="exportPopup">
+        <h3>Экспортировать диаграмму</h3>
+        <div class="export-container">
+            <select id="exportFormat" style="padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc;">
+                <option value="svg">SVG</option>
+                <option value="png">PNG</option>
+            </select>
+        </div>
+        <button class="export-button" id="confirmExport">Экспортировать</button>
+        <button id="closeExportPopup" style="margin-top: 10px;">Закрыть</button>
+    </div>
+
+    <!-- Подключаем BPMN.js -->
+    <script src="./BPMN Рисовалка_files/bpmn-modeler.development.js.загружено"></script>
+
+    <script>
+        var bpmnModeler = new BpmnJS({
+            container: '#canvas',
+            keyboard: {
+                bindTo: document
+            }
+        });
+        const clipboard = bpmnModeler.get('clipboard');
+        const copyPaste = bpmnModeler.get('copyPaste');
+        const elementRegistry = bpmnModeler.get('elementRegistry');
+        const selection = bpmnModeler.get('selection');
+        const moddle = bpmnModeler.get('moddle');
+
+        let lastCopiedElements = null;
+
+        // Функция для получения параметра из URL
+        function getDiagramFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('diagram'); // Получаем параметр diagram
+        }
+
+        // Загрузка диаграммы по URL
+        async function loadDiagramFromUrl(diagramData) {
+            try {
+                const response = await fetch(`./diagrams/${diagramData}`);
+                if (!response.ok) throw new Error('Диаграмма не найдена');
+                const xml = await response.text();
+                await bpmnModeler.importXML(xml);
+                bpmnModeler.get('canvas').zoom('fit-viewport');
+                console.log('Схема успешно загружена из ссылки!');
+            } catch (error) {
+                console.error('Ошибка при загрузке схемы из ссылки:', error);
+                alert('Не удалось загрузить диаграмму по ссылке.');
+            }
+        }
+
+        // Инициализация: загрузка диаграммы из ссылки или по умолчанию
+        const diagramData = getDiagramFromUrl();
+        if (diagramData) {
+            loadDiagramFromUrl(diagramData);
+        } else {
+            loadDiagram();
+        }
+
+        async function loadDiagram() {
+            const xml = `<?xml version="1.0" encoding="UTF-8"?>
+                <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+                                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
+                                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
+                                  id="Definitions_1" 
+                                  targetNamespace="http://bpmn.io/schema/bpmn">
+                    <bpmn:process id="Process_1" isExecutable="false">
+                        <bpmn:startEvent id="StartEvent_1"/>
+                    </bpmn:process>
+                    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+                        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+                            <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+                                <dc:Bounds x="173" y="102" width="36" height="36"/>
+                            </bpmndi:BPMNShape>
+                        </bpmndi:BPMNPlane>
+                    </bpmndi:BPMNDiagram>
+                </bpmn:definitions>`;
+            try {
+                await bpmnModeler.importXML(xml);
+                console.log('Диаграмма по умолчанию загружена.');
+            } catch (err) {
+                console.error('Ошибка при загрузке диаграммы по умолчанию:', err);
+            }
+        }
+        function createReviver(moddle) {
+            const elCache = {};
+
+            return function(key, object) {
+                if (typeof object === 'object' && typeof object.$type === 'string') {
+                    const objectId = object.id;
+
+                    // Используем закэшированные элементы, если они уже существуют
+                    if (objectId && elCache[objectId]) {
+                        return elCache[objectId];
+                    }
+
+                    const type = object.$type;
+                    const attrs = Object.assign({}, object);
+                    delete attrs.$type;
+
+                    // Создаём новый элемент модели
+                    const newEl = moddle.create(type, attrs);
+
+                    if (objectId) {
+                        elCache[objectId] = newEl;
+                    }
+
+                    return newEl;
+                }
+
+                return object;
+            };
+        }
+
+        // Обработчики для копирования и вставки элементов
+        document.getElementById('copy-elements').addEventListener('click', function() {
+            const selectedElements = selection.get(); // Получаем все выбранные элементы
+            
+            const clipboard = bpmnModeler.get('clipboard'),
+                copyPaste = bpmnModeler.get('copyPaste'),
+                elementRegistry = bpmnModeler.get('elementRegistry');
+
+            if (selectedElements.length) {
+                // Копируем все выделенные элементы
+                copyPaste.copy(selectedElements);
+
+                // Получаем содержимое буфера обмена
+                const copied = clipboard.get();
+
+                // Сохраняем данные в LocalStorage
+                localStorage.setItem('bpmnClipboard', JSON.stringify(copied));
+
+                console.log('Элементы успешно скопированы и сохранены в LocalStorage.');
+            } else {
+                console.log('Нет элементов для копирования.');
+            }
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'c') {
+                const selectedElements = selection.get();
+
+                if (selectedElements.length) {
+                    const clipboard = bpmnModeler.get('clipboard'),
+                        copyPaste = bpmnModeler.get('copyPaste');
+                    
+                    // Копируем элементы
+                    copyPaste.copy(selectedElements);
+
+                    // Получаем содержимое буфера обмена
+                    const copied = clipboard.get();
+
+                    // Сохраняем данные в LocalStorage
+                    localStorage.setItem('bpmnClipboard', JSON.stringify(copied));
+
+                    console.log('Элементы успешно скопированы и сохранены в LocalStorage.');
+                } else {
+                    console.log('Нет элементов для копирования.');
+                }
+            }
+        });
+document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && event.key === 'v') {
+        const clipboard = bpmnModeler.get('clipboard'),
+            copyPaste = bpmnModeler.get('copyPaste'),
+            elementRegistry = bpmnModeler.get('elementRegistry'),
+            moddle = bpmnModeler.get('moddle'),
+            canvas = bpmnModeler.get('canvas');
+
+        // Получаем данные из LocalStorage
+        const serializedCopy = localStorage.getItem('bpmnClipboard');
+
+        if (!serializedCopy) {
+            console.error('Буфер обмена пуст, данные не найдены.');
+            return;
+        }
+
+        // Восстанавливаем элементы из JSON с помощью ревивера
+        const parsedCopy = JSON.parse(serializedCopy, createReviver(moddle));
+
+        // Вставляем элементы в буфер обмена
+        clipboard.set(parsedCopy);
+
+        // Определяем центр холста
+        const viewbox = canvas.viewbox();
+        const centerX = viewbox.x + viewbox.width / 2;
+        const centerY = viewbox.y + viewbox.height / 2;
+
+        // Вставляем элементы в центр холста
+        copyPaste.paste({
+            element: elementRegistry.get(canvas.getRootElement().id),
+            point: { x: centerX, y: centerY }
+        });
+
+        console.log('Элементы успешно вставлены в центр холста через Ctrl+V.');
+
+        // Очищаем LocalStorage после вставки
+        localStorage.removeItem('bpmnClipboard');
+        console.log('LocalStorage очищен после вставки.');
+    }
+});
+
+
+        document.getElementById('paste-elements').addEventListener('click', function() {
+    const clipboard = bpmnModeler.get('clipboard'),
+        copyPaste = bpmnModeler.get('copyPaste'),
+        elementRegistry = bpmnModeler.get('elementRegistry'),
+        moddle = bpmnModeler.get('moddle'),
+        canvas = bpmnModeler.get('canvas');
+
+    // Получаем данные из LocalStorage
+    const serializedCopy = localStorage.getItem('bpmnClipboard');
+
+    if (!serializedCopy) {
+        console.error('Буфер обмена пуст, данные не найдены.');
+        return;
+    }
+
+    // Восстанавливаем элементы из JSON с помощью ревивера
+    const parsedCopy = JSON.parse(serializedCopy, createReviver(moddle));
+
+    // Вставляем элементы в буфер обмена
+    clipboard.set(parsedCopy);
+
+    // Определяем центр холста
+    const viewbox = canvas.viewbox();  // Получаем текущий видимый участок холста
+    const centerX = viewbox.x + viewbox.width / 2;  // Центр по X
+    const centerY = viewbox.y + viewbox.height / 2; // Центр по Y
+
+    // Вставляем элементы в центр холста
+    copyPaste.paste({
+        element: elementRegistry.get(canvas.getRootElement().id),
+        point: { x: centerX, y: centerY }
+    });
+
+    console.log('Элементы успешно вставлены в центр холста.');
+
+    // Очищаем LocalStorage после вставки
+    localStorage.removeItem('bpmnClipboard');
+    console.log('LocalStorage очищен после вставки.');
+});
+
+
+
+        document.getElementById('save-diagram').addEventListener('click', async function() {
+            try {
+                const { xml } = await bpmnModeler.saveXML({ format: true });
+                const blob = new Blob([xml], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'diagram.bpmn';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 0);
+                console.log('Диаграмма сохранена!');
+            } catch (err) {
+                console.error('Ошибка при сохранении:', err);
+            }
+        });
+
+        document.getElementById('open-file').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    await bpmnModeler.importXML(e.target.result);
+                    console.log('Диаграмма загружена.');
+                } catch (err) {
+                    console.error('Ошибка при загрузке файла:', err);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Обработчик для получения ссылки
+        document.getElementById('get-link').addEventListener('click', async function() {
+            try {
+                const { xml } = await bpmnModeler.saveXML({ format: true });
+
+                // Создаём форму данных для отправки на сервер
+                const formData = new FormData();
+                const blob = new Blob([xml], { type: 'application/xml' });
+                formData.append('diagram', blob, 'diagram.bpmn');
+
+                // Отправляем диаграмму на сервер
+                const response = await fetch('save_diagram.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Ошибка при сохранении диаграммы на сервере');
+
+                const result = await response.json();
+
+                if (result.error) throw new Error(result.error);
+
+                const shareUrl = result.link;
+
+                // Показываем ссылку в попапе
+                const popup = document.getElementById('popup');
+                const overlay = document.getElementById('popupOverlay');
+                const linkField = document.getElementById('diagramLink');
+                const copyButton = document.getElementById('copyLink');
+
+                linkField.value = shareUrl;
+                popup.style.display = 'block';
+                overlay.style.display = 'block';
+
+                // Очистка предыдущих обработчиков
+                copyButton.onclick = null;
+
+                // Обработчик для копирования ссылки
+                copyButton.addEventListener('click', function() {
+                    linkField.select();
+                    linkField.setSelectionRange(0, 99999); // Для мобильных устройств
+
+                    // Копирование текста
+                    navigator.clipboard.writeText(linkField.value)
+                        .then(() => {
+                            console.log('Ссылка скопирована в буфер обмена!');
+                        })
+                        .catch(err => {
+                            console.error('Ошибка при копировании:', err);
+                            console.log('Не удалось скопировать ссылку. Пожалуйста, скопируйте её вручную.');
+                        });
+                }, { once: true }); // Обработчик срабатывает только один раз
+
+            } catch (err) {
+                console.error('Ошибка при получении ссылки:', err);
+                alert('Не удалось получить ссылку: ' + err.message);
+            }
+        });
+
+        // Закрытие попапа для ссылки
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        });
+
+        // Закрытие попапа при клике на оверлей
+        document.getElementById('popupOverlay').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        });
+
+        // Обработчик кнопки "Экспортировать диаграмму"
+        document.getElementById('export-diagram').addEventListener('click', function() {
+            const exportPopup = document.getElementById('exportPopup');
+            const exportOverlay = document.getElementById('exportPopupOverlay');
+            exportPopup.style.display = 'block';
+            exportOverlay.style.display = 'block';
+        });
+
+        // Закрытие попапа экспорта
+        document.getElementById('closeExportPopup').addEventListener('click', function() {
+            document.getElementById('exportPopup').style.display = 'none';
+            document.getElementById('exportPopupOverlay').style.display = 'none';
+        });
+
+        // Закрытие попапа экспорта при клике на оверлей
+        document.getElementById('exportPopupOverlay').addEventListener('click', function() {
+            document.getElementById('exportPopup').style.display = 'none';
+            document.getElementById('exportPopupOverlay').style.display = 'none';
+        });
+
+        // Обработчик для подтверждения экспорта
+        document.getElementById('confirmExport').addEventListener('click', async function() {
+            const format = document.getElementById('exportFormat').value;
+            if (format === 'svg') {
+                try {
+                    const { svg } = await bpmnModeler.saveSVG();
+                    const blob = new Blob([svg], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'diagram.svg';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => document.body.removeChild(a), 0);
+                    console.log('SVG экспортирован!');
+                    alert('Диаграмма успешно экспортирована в формате SVG.');
+                } catch (err) {
+                    console.error('Ошибка при экспорте SVG:', err);
+                    alert('Не удалось экспортировать диаграмму в формате SVG.');
+                }
+            } else if (format === 'png') {
+                try {
+                    const { svg } = await bpmnModeler.saveSVG();
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const v = document.createElement('div');
+                    v.innerHTML = svg;
+                    const svgElement = v.querySelector('svg');
+
+                    // Настройка размеров канваса
+                    const width = parseFloat(svgElement.getAttribute('width')) || 800;
+                    const height = parseFloat(svgElement.getAttribute('height')) || 600;
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    // Сериализация SVG и создание изображения
+                    const svgData = new XMLSerializer().serializeToString(svgElement);
+                    const img = new Image();
+                    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(svgBlob);
+
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0);
+                        URL.revokeObjectURL(url);
+                        const pngData = canvas.toDataURL('image/png');
+                        const a = document.createElement('a');
+                        a.href = pngData;
+                        a.download = 'diagram.png';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => document.body.removeChild(a), 0);
+                        console.log('PNG экспортирован!');
+                        alert('Диаграмма успешно экспортирована в формате PNG.');
+                    };
+
+                    img.onerror = function(err) {
+                        console.error('Ошибка при загрузке изображения SVG:', err);
+                        alert('Не удалось экспортировать диаграмму в формате PNG.');
+                    };
+
+                    img.src = url;
+                } catch (err) {
+                    console.error('Ошибка при экспорте PNG:', err);
+                    alert('Не удалось экспортировать диаграмму в формате PNG.');
+                }
+            } else {
+                alert('Выберите формат экспорта.');
+            }
+
+            // Закрытие попапа после экспорта
+            document.getElementById('exportPopup').style.display = 'none';
+            document.getElementById('exportPopupOverlay').style.display = 'none';
+        });
+
+        // Бургер-меню функционал
+        const burgerMenu = document.getElementById('burgerMenu');
+        const menu = document.getElementById('menu');
+        burgerMenu.addEventListener('click', () => {
+            burgerMenu.classList.toggle('open');
+            menu.classList.toggle('open');
+        });
+    </script>
+
+
+<svg id="helper-svg" style="visibility: hidden; position: fixed; width: 0px; height: 0px;"></svg></body></html>

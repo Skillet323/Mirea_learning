@@ -1,0 +1,40 @@
+@startuml
+' --- Аксёмы ---
+actor User
+
+node "Client Device" as client {
+  boundary Interface
+}
+
+node "Network Channel" as net
+
+node "Application Server" as server {
+  component "Symptom Analysis System" as SymptomAnalyzer
+  component "Consultation System"      as ConsultationEngine
+  component "Drug Selection System"    as DrugSelector
+  component "Pricing Service"          as CostCalculator
+  component "Order Processing System"  as OrderBuilder
+}
+
+database "Drug Database" as DrugDB
+
+' --- Поток взаимодействий ---
+User --> client          : Обращение пользователя
+client --> Interface     : Отправка обращения
+Interface --> net        : Передача обращения
+net --> server.SymptomAnalyzer     : Требует Обращение пользователя
+server.SymptomAnalyzer --> net     : Предоставляет Анализ симптомов и жалоб
+net --> server.ConsultationEngine  : Требует Анализ симптомов и жалоб
+server.ConsultationEngine --> net  : Предоставляет Консультация
+net --> server.DrugSelector        : Требует Консультация
+server.DrugSelector --> DrugDB     : Читает из БД препаратов
+DrugDB --> server.DrugSelector     : Возвращает данные
+server.DrugSelector --> net        : Предоставляет Подобранные препараты
+net --> server.CostCalculator      : Требует Подобранные препараты
+server.CostCalculator --> net      : Предоставляет Рассчитанная стоимость
+net --> server.OrderBuilder        : Требует Подобранные препараты, Рассчитанная стоимость
+server.OrderBuilder --> net        : Предоставляет Сформированный заказ
+net --> Interface                  : Доставляет Сформированный заказ
+Interface --> User                : Отправляет Ответ чат-бота
+
+@enduml

@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 OPR/117.0.0.0 (Edition Yx GX)" version="26.1.1">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="774" dy="413" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-1" value="&lt;h5 style=&quot;padding-top: 10px; padding-bottom: 440px;&quot;&gt;&lt;span style=&quot;font-size:12.0pt;mso-bidi-font-size:11.0pt;&lt;br/&gt;line-height:150%;font-family:&amp;quot;Times New Roman&amp;quot;,serif;mso-fareast-font-family:&lt;br/&gt;&amp;quot;Times New Roman&amp;quot;;mso-ansi-language:RU;mso-fareast-language:EN-US;mso-bidi-language:&lt;br/&gt;AR-SA&quot;&gt;Моделирование работы чат-бота для аптеки&lt;/span&gt;&lt;/h5&gt;" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;align=center;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="85" y="46" width="718" height="567" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-3" value="Интерфейс приложения" style="shape=umlBoundary;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="104" y="84" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-32" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-7" target="QwvaUrwIKXUXEOGLxOUX-29" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-5" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-7" target="XB_RvXO7k4b6Zn6_xTEq-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-7" value="Пользователь" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="299" y="226" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-6" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-15" target="QwvaUrwIKXUXEOGLxOUX-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-15" value="&lt;font&gt;Система&lt;/font&gt;&lt;div&gt;&lt;font&gt;распределения данных пользователей&lt;/font&gt;&lt;/div&gt;" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;align=center;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="108" y="485" width="102.22" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=1;endSize=24;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-23" target="QwvaUrwIKXUXEOGLxOUX-3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="163" y="200" />
+              <mxPoint x="163" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-23" value="Интерфейс чат-бота" style="shape=umlBoundary;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="104" y="226" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-3" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-26" target="XB_RvXO7k4b6Zn6_xTEq-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-26" value="Система управления безопасностью данных" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="116.91" y="345" width="89.31" height="101" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-29" value="Система для оформления заказа" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="456" y="132" width="81" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-30" value="Система предоставления консультации" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="452" y="243" width="100.82" height="117" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-41" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" target="QwvaUrwIKXUXEOGLxOUX-30" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="383.46585859473475" y="379.52547278665656" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-7" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-36" target="XB_RvXO7k4b6Zn6_xTEq-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-36" value="Система подбора препаратов" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="303.75" y="506" width="77" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-40" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=0;endSize=24;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-37" target="QwvaUrwIKXUXEOGLxOUX-36" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-37" value="Система подбора аналогов" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="460.5" y="506" width="77.88" height="89" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-42" value="Сервис&amp;nbsp;&lt;div&gt;расчета стоимости курса лечения&lt;/div&gt;" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="618" y="246.5" width="97.57" height="111.5" as="geometry" />
+        </mxCell>
+        <mxCell id="QwvaUrwIKXUXEOGLxOUX-46" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=0;endSize=24;entryX=0.943;entryY=0.745;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.217;exitY=0.211;exitDx=0;exitDy=0;exitPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-42" target="QwvaUrwIKXUXEOGLxOUX-29" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="694" y="204" as="sourcePoint" />
+            <mxPoint x="606" y="204" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ukM4H4pmGTzipbmV_9aF-0" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamondThin;endFill=0;endSize=24;exitX=0.042;exitY=0.587;exitDx=0;exitDy=0;exitPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="QwvaUrwIKXUXEOGLxOUX-42" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="673" y="419" as="sourcePoint" />
+            <mxPoint x="556" y="312" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-0" value="Система для анализа симптомов и жалоб пользователя" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="290.18" y="345" width="104.13" height="119" as="geometry" />
+        </mxCell>
+        <mxCell id="XB_RvXO7k4b6Zn6_xTEq-2" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.962;entryY=0.741;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XB_RvXO7k4b6Zn6_xTEq-0" target="QwvaUrwIKXUXEOGLxOUX-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

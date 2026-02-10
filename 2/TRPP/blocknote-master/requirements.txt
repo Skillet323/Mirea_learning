@@ -1,0 +1,6 @@
+django
+pillow
+python-dotenv
+django-ckeditor
+django-simple-history
+django-tinymce

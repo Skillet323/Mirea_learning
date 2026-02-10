@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Usage: $0 <directory_path>"
+    exit 1
+fi
+if [ -d "$1" ]; then
+    echo "Executable files in directory $1:"
+    for file in "$1"/*; do
+        if [ -x "$file" ]; then
+            echo "$(basename "$file")"
+        fi
+    done
+else
+    echo "Directory $1 does not exist."
+fi

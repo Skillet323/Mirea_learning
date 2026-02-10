@@ -1,0 +1,31 @@
+@startuml ComponentDiagram
+skinparam componentStyle rectangle
+
+title Диаграмма компонентов системы чат-бота
+
+component "Интерфейс приложения" as AppUI
+component "Интерфейс чат-бота"    as ChatbotUI
+component "Система для оформления заказа"          as OrderSystem
+component "Система предоставления консультации"    as ConsultationSystem
+component "Сервис расчета стоимости лечения"       as CostService
+component "Система управления безопасностью данных" as SecuritySystem
+component "Система анализа симптомов"              as SymptomAnalysis
+component "Система подбора препаратов"             as DrugSelection
+component "Система подбора аналогов"               as AnalogSelection
+database  "Препараты"                              as DrugsDB
+
+' Внешние интерфейсы
+AppUI --> ChatbotUI : взаимодействует
+
+' Основные зависимости
+ChatbotUI --> OrderSystem             : IOrderService
+ChatbotUI --> ConsultationSystem       : IConsultationService
+OrderSystem --> CostService            : ICostCalculation
+OrderSystem --> SecuritySystem         : IDataEncryption
+ConsultationSystem --> SymptomAnalysis : ISymptomAnalysis
+SymptomAnalysis --> DrugSelection      : IDrugRecommendation
+DrugSelection --> DrugsDB             : CRUD
+AnalogSelection --> DrugsDB           : CRUD
+OrderSystem --> AnalogSelection        : IAnalogsSearch
+
+@enduml

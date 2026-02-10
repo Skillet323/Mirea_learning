@@ -1,0 +1,38 @@
+{
+  "os":  "Windows-11-10.0.26100-SP0",
+  "python":  "CPython 3.12.3",
+  "startedAt":  "2025-03-20T10:31:09.797013Z",
+  "program":  "C:\\Users\\borga\\Desktop\\Студ\\Pytorch\\HW3\\train.py",
+  "codePath":  "train.py",
+  "email":  "mr.borgachev@gmail.com",
+  "root":  "C:\\Users\\borga\\Desktop\\Студ\\Pytorch\\HW3",
+  "host":  "DESKTOP-BB86VVG",
+  "executable":  "C:\\Users\\borga\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "codePathLocal":  "train.py",
+  "cpu_count":  6,
+  "cpu_count_logical":  12,
+  "gpu":  "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "495000219648",
+      "used":  "348745179136"
+    }
+  },
+  "memory":  {
+    "total":  "16487870464"
+  },
+  "cpu":  {
+    "count":  6,
+    "countLogical":  12
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "memoryTotal":  "6442450944",
+      "cudaCores":  3840,
+      "architecture":  "Ampere"
+    }
+  ],
+  "cudaVersion":  "12.8"
+}

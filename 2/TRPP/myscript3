@@ -1,0 +1,12 @@
+#!/bin/bash
+output_file="system_info.txt"
+date=$(date)
+users=$(powershell.exe -Command "Get-Process | Select-Object -ExpandProperty SessionId -Unique" 2>&1)
+uptime=$(powershell.exe -Command "Get-WmiObject Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime")
+echo "System Information:" > $output_file
+echo "Date and Time: $date" >> $output_file
+echo "Logged in users:" >> $output_file
+echo "$users" >> $output_file
+wmic useraccount get name >> $output_file
+echo "System Uptime: $uptime" >> $output_file
+echo "Information saved to $output_file"

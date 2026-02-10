@@ -1,0 +1,33 @@
+#!/bin/bash
+if ! command -v python &> /dev/null; then
+    echo "Python не установлен. Установите Python и добавьте его в PATH."
+    exit 1
+fi
+if [ ! -f blocknote-master.tar.gz ]; then
+    echo "Скачивание проекта..."
+    wget https://www.dropbox.com/s/ija7ax3sj6ysb0p/blocknote-master.tar.gz
+else
+    echo "Архив проекта уже скачан."
+fi
+if [ ! -d blocknote-master ]; then
+    echo "Распаковка архива..."
+    tar -xvf blocknote-master.tar.gz
+else    
+    echo "Проект уже распакован."
+fi
+cd blocknote-master
+if [ ! -d venv ]; then
+    python -m venv venv
+fi
+echo "Активация виртуального окружения..."
+source venv/Scripts/activate
+echo "Обновление pip..."
+python -m pip install --upgrade pip
+echo "Установка зависимостей из requirements.txt..."
+if [ -f requirements.txt ]; then
+    pip install -r requirements.txt
+else
+    echo "Файл requirements.txt не найден."
+    exit 1
+fi
+echo "Виртуальное окружение создано и зависимости установлены."

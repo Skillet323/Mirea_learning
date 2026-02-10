@@ -1,0 +1,17 @@
+100%|██████████████████████████████████████████████████████████████████████████████| 9.91M/9.91M [00:31<00:00, 314kB/s]
+100%|██████████████████████████████████████████████████████████████████████████████| 28.9k/28.9k [00:00<00:00, 200kB/s]
+100%|█████████████████████████████████████████████████████████████████████████████| 1.65M/1.65M [00:01<00:00, 1.59MB/s]
+100%|█████████████████████████████████████████████████████████████████████████████| 4.54k/4.54k [00:00<00:00, 5.30MB/s]
+Traceback (most recent call last):
+  File "C:\Users\borga\Desktop\Студ\Pytorch\HW3\train.py", line 44, in <module>
+    main()
+  File "C:\Users\borga\Desktop\Студ\Pytorch\HW3\train.py", line 23, in main
+    loss.backward()
+  File "C:\Users\borga\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "C:\Users\borga\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\autograd\__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "C:\Users\borga\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\autograd\graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

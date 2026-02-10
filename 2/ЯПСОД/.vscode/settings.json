@@ -1,0 +1,5 @@
+{
+    "r.rpath.windows": "C:\\Program Files\\R\\R-4.4.3\\bin\\x64\\R.exe",  // Пример пути
+    "r.rpath.mac": "/usr/local/bin/R",
+    "r.rpath.linux": "/usr/bin/R"
+}

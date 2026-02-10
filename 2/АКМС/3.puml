@@ -1,0 +1,51 @@
+@startuml
+skinparam componentStyle uml2
+
+package "Система управления аптекой" {
+  [Интерфейс приложения] as UI
+  [Интерфейс чат-бота] as ChatBot
+  [Система оформления заказов] as OrderSystem
+  [Система консультаций] as ConsultSystem
+  [Система анализа симптомов] as SymptomAnalysis
+  [Система подбора препаратов] as DrugSelection
+  [Система подбора аналогов] as AnalogSelection
+  [Сервис расчета стоимости] as CostService
+  [Система безопасности] as SecuritySystem
+  [База данных препаратов] as DrugDB
+}
+
+() "IOrder" as IOrder
+() "IConsultation" as IConsult
+() "ISymptomAnalysis" as ISymptom
+() "IDrugSelection" as IDrug
+() "IAnalogSearch" as IAnalog
+() "ICostCalculation" as ICost
+() "ISecurity" as ISecurity
+
+UI --> ChatBot : использует
+ChatBot ..> IConsult : требует
+ChatBot ..> ISymptom : требует
+
+OrderSystem --> IOrder : предоставляет
+OrderSystem ..> ICost : требует
+OrderSystem ..> IDrug : требует
+
+ConsultSystem --> IConsult : предоставляет
+ConsultSystem ..> IDrug : требует
+
+SymptomAnalysis --> ISymptom : предоставляет
+SymptomAnalysis ..> IDrug : требует
+
+DrugSelection --> IDrug : предоставляет
+DrugSelection --> DrugDB : использует
+
+AnalogSelection --> IAnalog : предоставляет
+AnalogSelection --> DrugDB : использует
+
+CostService --> ICost : предоставляет
+CostService --> DrugDB : использует
+
+SecuritySystem --> ISecurity : предоставляет
+
+[База данных препаратов] as DrugDB <<database>>
+@enduml

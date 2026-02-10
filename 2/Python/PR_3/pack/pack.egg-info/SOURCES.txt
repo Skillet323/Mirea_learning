@@ -1,0 +1,9 @@
+setup.py
+pack/__init__.py
+pack/data.json
+pack/module1.py
+pack/module2.py
+pack.egg-info/PKG-INFO
+pack.egg-info/SOURCES.txt
+pack.egg-info/dependency_links.txt
+pack.egg-info/top_level.txt

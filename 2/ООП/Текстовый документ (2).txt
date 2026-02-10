@@ -1,0 +1,14 @@
+    cout << dynamic_cast<cl8*>(obj)->cl6::cl2::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl6::cl3::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl7::cl4::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl7::cl5::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl6::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl7::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl8::Out() << endl;
+
+    // Выводим имена объектов классов 1, 2, 3, 4 и 5 через различные пути
+    cout << dynamic_cast<cl8*>(obj)->cl6::cl2::cl1::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl6::cl3::cl1::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl7::cl4::cl1::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl7::cl5::cl1::Out() << endl;
+    cout << dynamic_cast<cl8*>(obj)->cl6::cl2::cl1::cl1::Out() << endl;

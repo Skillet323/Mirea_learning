@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Usage: $0 <directory_path>"
+    exit 1
+fi
+if [ -d "$1" ]; then
+    size=$(du -sh "$1" | cut -f1)
+    echo "The size of directory $1 is: $size"
+else
+    echo "Directory $1 does not exist."
+fi

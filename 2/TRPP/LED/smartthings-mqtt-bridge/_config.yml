@@ -1,0 +1,11 @@
+mqtt:
+  # Используем MQTT over TLS (mqtts)
+  host: f67d2227d4164ba7bcd2aaeb3b13375c.s1.eu.hivemq.cloud:8883
+  username: Skillet
+  password: Sarik323
+  preface: smartthings
+  # по умолчанию retain: true, можно добавить:
+  retain: false
+
+# порт для HTTP‑сервиса мостика
+port: 8080

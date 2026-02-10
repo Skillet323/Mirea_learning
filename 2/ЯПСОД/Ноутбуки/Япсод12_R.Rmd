@@ -1,0 +1,129 @@
+---
+title: "Анализ музыкальных предпочтений"
+author: "Боргачев Тимофей"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+    fig_caption: yes
+    latex_engine: xelatex  
+---
+
+```{r setup, include=FALSE}
+# Настройки knitr и глобальные опции
+knitr::opts_chunk$set(
+  echo = TRUE,
+  dev = "cairo_pdf",
+  message = FALSE,
+  warning = FALSE,
+  cache = TRUE,
+  fig.align = "center"
+)
+options(stringsAsFactors = FALSE)
+# Подключение необходимых библиотек
+library(ggplot2)
+library(corrplot)
+library(caret)
+library(nnet)
+```
+
+## EDA
+
+```{r load-preprocess}
+library(corrplot)
+df <- read.csv("mxmh_survey_results.csv")
+df <- na.omit(df)
+
+# Описательная статистика
+summary(df[, c("Age", "Anxiety", "Depression", "Hours.per.day")])
+```
+
+## Корреляционный анализ
+
+```{r correlation-plot, fig.width=6, fig.height=6}
+# Корреляционная матрица
+corr_matrix <- cor(df[, c("Age", "Anxiety", "Depression", "Hours.per.day")])
+# Визуализация корреляций
+corrplot(corr_matrix, method = "circle", type = "upper",
+         addCoef.col = "black", tl.col = "black", tl.cex = 0.8)
+```
+
+## Линейная регрессия
+
+```{r linear-model-summary}
+# Построение модели линейной регрессии
+model_lm <- lm(Anxiety ~ Depression + Hours.per.day + Age, data = df)
+
+# Вывод результатов модели
+summary(model_lm)
+```
+
+## Многоклассовая логистическая регрессия
+
+```{r logistic-regression}
+library(caret)
+library(nnet)
+# Удаление столбца Timestamp
+if ("Timestamp" %in% colnames(df)) {
+  df$Timestamp <- NULL
+}
+
+# Кодирование категориальных признаков
+cat_columns <- names(df)[sapply(df, is.character)]
+for (col in cat_columns) {
+  # Преобразуем в фактор с сохранением порядка уровней
+  df[[col]] <- factor(df[[col]])
+  # Кодируем в числовой формат
+  df[[col]] <- as.numeric(df[[col]])
+}
+
+# Заполнение пропусков в числовых столбцах
+numeric_columns <- names(df)[sapply(df, is.numeric)]
+for (col in numeric_columns) {
+  df[[col]][is.na(df[[col]])] <- mean(df[[col]], na.rm = TRUE)
+}
+
+# Преобразуем целевую переменную в фактор
+df$Music.effects <- as.factor(df$Music.effects)
+
+# Подготовка данных для классификации
+X_class <- df[, !names(df) %in% c("Music.effects", "Anxiety", "Depression")]
+y_class <- df$Music.effects
+temp_class <- cbind(X_class, Music.effects = y_class)
+set.seed(42)
+trainIndex_class <- createDataPartition(temp_class$Music.effects, p = 0.7, list = FALSE)
+train_class <- temp_class[trainIndex_class, ]
+test_class <- temp_class[-trainIndex_class, ]
+model <- multinom(Music.effects ~ ., data = train_class)
+
+
+# Прогнозирование на тестовых данных
+pred_class <- predict(model, newdata = test_class)
+
+# Преобразуем предсказания и тестовые данные в факторы с одинаковыми уровнями
+levels_test <- levels(test_class$Music.effects)
+pred_class <- factor(pred_class, levels = levels_test)
+actual_class <- factor(test_class$Music.effects, levels = levels_test)
+
+conf_matrix <- confusionMatrix(pred_class, actual_class)
+print(conf_matrix)
+```
+
+## Кластерный анализ
+
+```{r clustering, fig.width=6, fig.height=5}
+#Кластеризация методом K-means
+set.seed(42)
+kmeans_result <- kmeans(df[, c("Anxiety", "Depression", "Hours.per.day")], centers=3)
+df$Cluster <- kmeans_result$cluster
+
+# Визуализация
+library(ggplot2)
+ggplot(df, aes(Anxiety, Depression, color=as.factor(Cluster))) + geom_point()
+```
+
+```{r save-model, include=FALSE}
+# Сохранение обученной модели многоклассовой регрессии
+saveRDS(model, "music_effects_model.rds")
+```

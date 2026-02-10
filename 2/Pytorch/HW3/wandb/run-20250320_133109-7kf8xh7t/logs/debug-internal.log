@@ -1,0 +1,15 @@
+{"time":"2025-03-20T13:31:09.8066163+03:00","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"C:\\Users\\borga\\Desktop\\Студ\\Pytorch\\HW3\\wandb\\run-20250320_133109-7kf8xh7t\\logs\\debug-core.log"}
+{"time":"2025-03-20T13:31:10.132529+03:00","level":"INFO","msg":"created new stream","id":"7kf8xh7t"}
+{"time":"2025-03-20T13:31:10.132529+03:00","level":"INFO","msg":"stream: started","id":"7kf8xh7t"}
+{"time":"2025-03-20T13:31:10.132529+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:31:10.132529+03:00","level":"INFO","msg":"handler: started","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:31:10.132529+03:00","level":"INFO","msg":"sender: started","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:31:11.0341028+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-03-20T13:33:07.6615035+03:00","level":"INFO","msg":"stream: closing","id":"7kf8xh7t"}
+{"time":"2025-03-20T13:33:07.6615035+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-03-20T13:33:07.6625801+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-03-20T13:33:08.7919416+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-03-20T13:33:09.8017061+03:00","level":"INFO","msg":"handler: closed","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:33:09.8017061+03:00","level":"INFO","msg":"sender: closed","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:33:09.8017061+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"7kf8xh7t"}
+{"time":"2025-03-20T13:33:09.8024321+03:00","level":"INFO","msg":"stream: closed","id":"7kf8xh7t"}

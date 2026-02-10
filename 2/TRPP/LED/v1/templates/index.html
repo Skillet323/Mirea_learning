@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LED Control Panel</title>
+  <meta name="current-ip" content="{{ current_ip }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <h1 class="title">Управление LED-лентой</h1>
+    <div class="status" id="status">Подключение...</div>
+  </header>
+
+  <div class="power-control">
+    <div class="power-status">
+      <span>Состояние: </span>
+      <span id="powerStateText">Выключен</span>
+      <span id="powerIndicator" class="indicator off"></span>
+    </div>
+
+    <div class="power-buttons">
+      <a href="/power/on" id="powerOnLink"><button id="powerOnBtn" class="power-btn">Включить</button></a>
+      <a href="/power/off" id="powerOffLink"><button id="powerOffBtn" class="power-btn" disabled>Выключить</button></a>
+    </div>
+  </div>
+  <form action="/color" method="post">
+    <label>R: <input type="number" name="r" min="0" max="255"></label><br>
+    <label>G: <input type="number" name="g" min="0" max="255"></label><br>
+    <label>B: <input type="number" name="b" min="0" max="255"></label><br>
+    <button type="submit">Установить цвет</button>
+  </form>
+
+  <form action="/mode" method="post">
+    <label>Режим:
+      <select name="mode">
+        <option value="0">Статичный</option>
+        <option value="1">Дыхание</option>
+        <option value="2">Радуга</option>
+        <option value="3">Музыка</option>
+      </select>
+    </label>
+    <button type="submit">Выбрать режим</button>
+  </form>
+  <div id="ipModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Настройки подключения</h2>
+      <label for="ipInput">IP-адрес контроллера:</label>
+      <div class="ip-input-container">
+        <input type="text" id="ipInput" value="http://192.168.1.100">
+      </div>
+      <button id="saveIpBtn" class="save-btn">Сохранить</button>
+    </div>
+  </div>
+  <div id="connectionAlert" class="connection-alert">
+    <div class="alert-content">
+      <p>Не удалось подключиться к устройству</p>
+      <p class="alert-hint">Нажмите на статус для настройки подключения</p>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusEl = document.getElementById('status');
+        const ipModal = document.getElementById('ipModal');
+        const ipInput = document.getElementById('ipInput');
+        const saveIpBtn = document.getElementById('saveIpBtn');
+        const closeModal = document.querySelector('.close');
+        const powerOnBtn = document.getElementById('powerOnBtn');
+        const powerOffBtn = document.getElementById('powerOffBtn');
+        const powerIndicator = document.getElementById('powerIndicator');
+        const powerStateText = document.getElementById('powerStateText');
+
+        // Загружаем состояние из localStorage (по умолчанию false - выключено)
+        let isDeviceOn = localStorage.getItem('deviceState') === 'true';
+
+        // Функция обновления состояния
+        function updatePowerState() {
+          if (isDeviceOn) {
+            powerIndicator.className = 'indicator on';
+            powerStateText.textContent = 'Включен';
+            powerOnBtn.disabled = true;
+            powerOffBtn.disabled = false;
+          } else {
+            powerIndicator.className = 'indicator off';
+            powerStateText.textContent = 'Выключен';
+            powerOnBtn.disabled = false;
+            powerOffBtn.disabled = true;
+          }
+        }
+        // Обработчики кнопок
+        powerOnBtn.addEventListener('click', async () => {
+          isDeviceOn = true;
+          localStorage.setItem('deviceState', 'true');
+          updatePowerState();
+        });
+
+        powerOffBtn.addEventListener('click', async () => {
+          isDeviceOn = false;
+          localStorage.setItem('deviceState', 'false');
+          updatePowerState();
+        });
+
+        updatePowerState();
+        
+        // Загружаем IP из сервера при загрузке
+        let controllerURL = 'http://192.168.1.100'; // дефолтное значение
+
+        // Функция загрузки текущего IP с сервера
+        async function loadCurrentIP() {
+            try {
+                const response = await fetch('/');
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const ipMeta = doc.querySelector('meta[name="current-ip"]');
+                if (ipMeta) {
+                    controllerURL = ipMeta.content;
+                    ipInput.value = controllerURL;
+                }
+            } catch (e) {
+                console.error('Error loading current IP:', e);
+            }
+        }
+
+        // Проверка подключения
+        async function checkConnection() {
+            statusEl.textContent = "Проверка подключения...";
+            statusEl.style.color = "#666";
+            const alertBox = document.getElementById('connectionAlert');
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const res = await fetch(`${controllerURL}/`, {
+                    method: "GET",
+                    mode: "no-cors",
+                    cache: "no-store"
+                });
+                statusEl.textContent = "Подключено";
+                statusEl.style.color = "#006400";
+                alertBox.style.display = 'none'; // Скрываем алерт при успехе
+            } catch (e) {
+                statusEl.textContent = "Нет подключения";
+                statusEl.style.color = "#800000";
+                alertBox.style.display = 'block'; // Показываем алерт при ошибке
+            }
+        }
+        document.getElementById('connectionAlert').addEventListener('click', function() {
+          this.style.display = 'none';
+        });
+
+        // Обработчики событий
+        statusEl.addEventListener('click', () => {
+            ipInput.value = controllerURL;
+            ipModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            ipModal.style.display = 'none';
+        });
+
+        saveIpBtn.addEventListener('click', async () => {
+            const newIP = ipInput.value.trim();
+            if (newIP) {
+                try {
+                    const response = await fetch('/update_ip', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `ip=${encodeURIComponent(newIP)}`
+                    });
+
+                    if (response.ok) {
+                        controllerURL = newIP;
+                        localStorage.setItem('controllerURL', newIP);
+                        ipModal.style.display = 'none';
+                        await checkConnection();
+                    }
+                } catch (e) {
+                    console.error('Error updating IP:', e);
+                }
+            }
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == ipModal) {
+                ipModal.style.display = 'none';
+            }
+        });
+
+        // Инициализация
+        loadCurrentIP().then(() => {
+            checkConnection();
+            setInterval(checkConnection, 5000);
+        });
+
+    });
+  </script>
+</body>
+</html>
